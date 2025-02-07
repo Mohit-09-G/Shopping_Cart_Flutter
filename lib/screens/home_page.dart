@@ -1,47 +1,6 @@
-import 'dart:ffi';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shop/models/product_model.dart';
-
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-// addItem(ProductModel item) {
-
-// }
-List<Map<int, List<ProductModel>>> allProducts = [];
-// Function to add products to the list of maps
-void addProduct(ProductModel product) {
-  bool productAdded = false;
-
-  // Iterate through the list of maps to find if the product ID exists
-  for (var productMap in allProducts) {
-    if (productMap.containsKey(product.id)) {
-      // If the product ID exists in the map, add to the list
-      productMap[product.id]?.add(product);
-      productAdded = true;
-      break;
-    }
-  }
-
-  // If product ID was not found, create a new map and add it to the list
-  if (!productAdded) {
-    allProducts.add({
-      product.id: [product]
-    });
-  }
-}
-
-removeItem() {}
-
-List<ProductModel> eachProdcuctList = [];
-List<List<ProductModel>> cartList = [];
 
 List<ProductModel> products = [
   ProductModel(
@@ -94,10 +53,62 @@ List<ProductModel> products = [
       productPrice: "\$2.09")
 ];
 
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
 class _HomePageState extends State<HomePage> {
+  List<Map<int, List<ProductModel>>> allProducts = [];
+
+  @override
+  void initState() {
+    for (var i = 0; i < products.length; i++) {
+      allProducts.add({products[i].id: []});
+    }
+    super.initState();
+  }
+
+// Function to add products to the list of maps
+  void addProduct(ProductModel product) {
+    bool productAdded = false;
+
+    // Iterate through the list of maps to find if the product ID exists
+    for (var productMap in allProducts) {
+      if (productMap.containsKey(product.id)) {
+        // If the product ID exists in the map, add to the list
+        productMap[product.id]?.add(product);
+        productAdded = true;
+        break;
+      }
+    }
+
+    // If product ID was not found, create a new map and add it to the list
+    if (!productAdded) {
+      allProducts.add({
+        product.id: [product]
+      });
+    }
+    setState(() {});
+  }
+
+  void removeProduct(ProductModel product) {
+    // bool productRemove = false;
+
+    for (var items in allProducts) {
+      if (items.containsKey(product.id)) {
+        items[product.id]?.remove(product);
+        // productRemove = true;
+        break;
+      }
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
-    print("object");
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFFFFFFFF),
@@ -203,77 +214,70 @@ class _HomePageState extends State<HomePage> {
                         InkWell(
                           splashColor: Colors.redAccent,
                           onTap: () {
-                            print("ontap Add to cart ");
+                            addProduct(products[index]);
                           },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  removeItem();
-                                },
-                                child: Image.asset(
-                                  "assets/icons/minus.png",
-                                  height: 15,
-                                  width: 15,
+                          child: allProducts[index][index]!.isNotEmpty
+                              ? Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        removeProduct(products[index]);
+                                      },
+                                      child: Image.asset(
+                                        "assets/icons/minus.png",
+                                        height: 15,
+                                        width: 15,
+                                      ),
+                                    ),
+                                    Text(
+                                      allProducts[index][index]!
+                                          .length
+                                          .toString(),
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        color: Color(0XFF000000),
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        addProduct(products[index]);
+                                      },
+                                      child: Image.asset(
+                                        "assets/icons/plus.png",
+                                        height: 15,
+                                        width: 15,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/icons/basket.png",
+                                      height: 15,
+                                      width: 15,
+                                    ),
+                                    Container(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                      "Add to cart",
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        color: Color(0XFF000000),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              Text(
-                                "1",
-                                style: GoogleFonts.poppins(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0XFF000000),
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  addProduct(products[index]);
-                                  setState(() {});
-                                },
-                                child: Image.asset(
-                                  "assets/icons/plus.png",
-                                  height: 15,
-                                  width: 15,
-                                ),
-                              ),
-                            ],
-                          ),
-                          //  Row(
-                          //   mainAxisAlignment: MainAxisAlignment.center,
-                          //   children: [
-                          //     Image.asset(
-                          //       "assets/icons/basket.png",
-                          //       height: 15,
-                          //       width: 15,
-                          //     ),
-                          //     Container(
-                          //       width: 10,
-                          //     ),
-                          //     Text(
-                          //       "Add to cart",
-                          //       style: GoogleFonts.poppins(
-                          //         fontSize: 12,
-                          //         fontWeight: FontWeight.w500,
-                          //         color: Color(0XFF000000),
-                          //       ),
-                          //     ),
-                          //   ],
-                          // ),
                         ),
                       ],
                     ),
                   )
-
-                  // ElevatedButton(
-                  //     onPressed: () => {},
-                  //     child: Text("Add to cart",
-                  //         style: GoogleFonts.poppins(
-                  //             textStyle: TextStyle(
-                  //           fontSize: 12,
-                  //           fontWeight: FontWeight.w500,
-                  //           color: Color(0XFF000000),
-                  //         )))),
                 ],
               ),
             ),
