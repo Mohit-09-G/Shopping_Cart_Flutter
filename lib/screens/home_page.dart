@@ -120,169 +120,202 @@ class _HomePageState extends State<HomePage> {
         ),
         centerTitle: true,
       ),
-      body: GridView.builder(
-        padding: EdgeInsets.all(10),
-        itemCount: products.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            childAspectRatio: 0.8,
-            crossAxisCount: 2,
-            crossAxisSpacing: 12.0,
-            mainAxisSpacing: 12.0),
-        itemBuilder: (context, index) {
-          return Card(
-            elevation: 3,
-            child: Container(
-              color: Color(0xFFFFFFFF),
-              //height: 700,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                //crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Column(
-                    children: [
-                      Card(
-                        margin: EdgeInsets.all(10),
-                        shadowColor: Color(0xFF000000),
-                        elevation: 5,
-                        child: Image.asset(
-                          products[index].productImage,
-                          height: 100,
-                          width: 100,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(products[index].productPrice,
-                          style: GoogleFonts.poppins(
-                            textStyle: TextStyle(fontSize: 12),
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF6CC51D),
-                          )),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        products[index].productName,
-                        style: GoogleFonts.poppins(
-                            textStyle: TextStyle(fontSize: 15),
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF000000)),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        products[index].productQuantity,
-                        style: GoogleFonts.poppins(
-                            textStyle: TextStyle(fontSize: 12),
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF868889)),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ), // Divider(
-                  //   height: 1,
-                  //   thickness: 2,
-                  //   color: Color(0xFF000000),
-                  //   indent: 16,
-                  //   endIndent: 16,
-                  // ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          color: Color(0xFFEBEBEB),
-                          height: 2,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  Expanded(
+      body: Column(
+        children: [
+          Expanded(
+            flex: 6,
+            child: GridView.builder(
+              padding: EdgeInsets.all(10),
+              itemCount: products.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  childAspectRatio: 0.8,
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 12.0,
+                  mainAxisSpacing: 12.0),
+              itemBuilder: (context, index) {
+                return Card(
+                  elevation: 3,
+                  child: Container(
+                    color: Color(0xFFFFFFFF),
+                    //height: 700,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      //crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        InkWell(
-                          splashColor: Colors.redAccent,
-                          onTap: () {
-                            addProduct(products[index]);
-                          },
-                          child: allProducts[index][index]!.isNotEmpty
-                              ? Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        removeProduct(products[index]);
-                                      },
-                                      child: Image.asset(
-                                        "assets/icons/minus.png",
-                                        height: 15,
-                                        width: 15,
-                                      ),
-                                    ),
-                                    Text(
-                                      allProducts[index][index]!
-                                          .length
-                                          .toString(),
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0XFF000000),
-                                      ),
-                                    ),
-                                    GestureDetector(
+                        Column(
+                          children: [
+                            Card(
+                              margin: EdgeInsets.all(10),
+                              shadowColor: Color(0xFF000000),
+                              elevation: 5,
+                              child: Image.asset(
+                                products[index].productImage,
+                                height: 100,
+                                width: 100,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(products[index].productPrice,
+                                style: GoogleFonts.poppins(
+                                  textStyle: TextStyle(fontSize: 12),
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF6CC51D),
+                                )),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              products[index].productName,
+                              style: GoogleFonts.poppins(
+                                  textStyle: TextStyle(fontSize: 15),
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF000000)),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              products[index].productQuantity,
+                              style: GoogleFonts.poppins(
+                                  textStyle: TextStyle(fontSize: 12),
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF868889)),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ), // Divider(
+                        //   height: 1,
+                        //   thickness: 2,
+                        //   color: Color(0xFF000000),
+                        //   indent: 16,
+                        //   endIndent: 16,
+                        // ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                color: Color(0xFFEBEBEB),
+                                height: 2,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              allProducts[index][index]!.isNotEmpty
+                                  ? Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            removeProduct(products[index]);
+                                          },
+                                          child: Image.asset(
+                                            "assets/icons/minus.png",
+                                            height: 15,
+                                            width: 15,
+                                          ),
+                                        ),
+                                        Text(
+                                          allProducts[index][index]!
+                                              .length
+                                              .toString(),
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                            color: Color(0XFF000000),
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            addProduct(products[index]);
+                                          },
+                                          child: Image.asset(
+                                            "assets/icons/plus.png",
+                                            height: 15,
+                                            width: 15,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : GestureDetector(
                                       onTap: () {
                                         addProduct(products[index]);
                                       },
-                                      child: Image.asset(
-                                        "assets/icons/plus.png",
-                                        height: 15,
-                                        width: 15,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Image.asset(
+                                            "assets/icons/basket.png",
+                                            height: 15,
+                                            width: 15,
+                                          ),
+                                          Container(
+                                            width: 10,
+                                          ),
+                                          Text(
+                                            "Add to cart",
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              color: Color(0XFF000000),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ],
-                                )
-                              : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/icons/basket.png",
-                                      height: 15,
-                                      width: 15,
-                                    ),
-                                    Container(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      "Add to cart",
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0XFF000000),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          Expanded(
+              flex: 1,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 50,
+                          width: 200.0,
+                          child: ElevatedButton(
+                              onPressed: () {
+                                print("click");
+                              },
+                              child: Text(
+                                "Cart",
+                                style: TextStyle(color: Colors.black),
+                              )),
                         ),
                       ],
                     ),
-                  )
+                  ),
                 ],
-              ),
-            ),
-          );
-        },
+              ))
+        ],
       ),
     );
   }
