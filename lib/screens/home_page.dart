@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shop/models/product_model.dart';
+import 'package:shop/screens/add_to_cart.dart';
 
 List<ProductModel> products = [
   ProductModel(
@@ -302,13 +303,28 @@ class _HomePageState extends State<HomePage> {
                           height: 50,
                           width: 200.0,
                           child: ElevatedButton(
-                              onPressed: () {
-                                print("click");
-                              },
-                              child: Text(
-                                "Cart",
-                                style: TextStyle(color: Colors.black),
-                              )),
+                            onPressed: () {
+                              List<ProductModel> cartItems = [];
+
+                              for (var productMap in allProducts) {
+                                productMap.forEach((key, value) {
+                                  cartItems.addAll(value);
+                                });
+                              }
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      AddToCart(cartItems: cartItems),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              "Cart",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          ),
                         ),
                       ],
                     ),
