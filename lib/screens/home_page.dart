@@ -108,6 +108,39 @@ class _HomePageState extends State<HomePage> {
     setState(() {});
   }
 
+  void mergeMapData(
+    List<Map<int, List<ProductModel>>> allProducts,
+    List<Map<int, List<ProductModel>>> result,
+  ) {
+    for (var resultMap in result) {
+      resultMap.forEach((key, value) {
+        // Check if the key exists in allProducts
+        bool found = false;
+        for (var allProductMap in allProducts) {
+          if (allProductMap.containsKey(key)) {
+            found = true;
+            // If the value for this key is a map, we recursively call mergeMapData
+            if (value is Map && allProductMap[key] is Map) {
+              mergeMapData(
+                allProductMap[key] as List<Map<int, List<ProductModel>>>,
+                value as List<Map<int, List<ProductModel>>>,
+              );
+            } else {
+              // Otherwise, we simply update the key with the new value
+              allProductMap[key] = value;
+            }
+            break;
+          }
+        }
+        // If the key wasn't found in any map, add it
+        if (!found) {
+          allProducts.add({key: value});
+        }
+      });
+    }
+    setState(() {}); // Assuming you want to trigger the UI update
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -295,39 +328,36 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: 50,
-                          width: 200.0,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              List<ProductModel> cartItems = [];
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 50,
+                        width: 200.0,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            List<Map<int, List<ProductModel>>> result =
+                                await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    AddToCart(cartItems: allProducts),
+                              ),
+                            );
 
-                              for (var productMap in allProducts) {
-                                productMap.forEach((key, value) {
-                                  cartItems.addAll(value);
-                                });
-                              }
-
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      AddToCart(cartItems: cartItems),
-                                ),
-                              );
-                            },
-                            child: Text(
-                              "Cart",
-                              style: TextStyle(color: Colors.black),
-                            ),
+                            allProducts.clear();
+                            for (var i = 0; i < products.length; i++) {
+                              allProducts.add({products[i].id: []});
+                            }
+                            mergeMapData(allProducts, result);
+                          },
+                          child: Text(
+                            "Cart",
+                            style: TextStyle(color: Colors.black),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               ))
