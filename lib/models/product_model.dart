@@ -2,7 +2,7 @@ class ProductModel {
   final int id;
   final String productImage;
   final String productName;
-  final String productQuantity;
+  late final String productQuantity;
   final String productPrice;
 
   ProductModel(

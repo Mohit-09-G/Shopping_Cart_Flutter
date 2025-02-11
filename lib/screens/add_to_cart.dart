@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shop/models/product_model.dart';
-import 'package:shop/screens/home_page.dart';
 
 class AddToCart extends StatefulWidget {
   final List<Map<int, List<ProductModel>>> cartItems;
@@ -168,7 +167,7 @@ class _AddToCartState extends State<AddToCart> {
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
           onPressed: () {
-            Navigator.pop(context); // Navigate back to the product list
+            Navigator.pop(context);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.green,
@@ -178,7 +177,7 @@ class _AddToCartState extends State<AddToCart> {
             ),
           ),
           child: Text(
-            "Continue Shopping",
+            "Check out",
             style: GoogleFonts.poppins(fontSize: 16, color: Colors.white),
           ),
         ),
