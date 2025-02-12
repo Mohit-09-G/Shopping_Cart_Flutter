@@ -11,4 +11,25 @@ class ProductModel {
       required this.productName,
       required this.productQuantity,
       required this.productPrice});
+
+  //converting A product model to Map
+
+  Map<String, dynamic> tomap() {
+    return {
+      'id': id,
+      'productImage': productImage,
+      'productName': productName,
+      'productQuantity': productQuantity,
+      'productPrice': productPrice
+    };
+  }
+
+  factory ProductModel.fromMap(Map<String, dynamic> map) {
+    return ProductModel(
+        id: map['id'],
+        productImage: map['productImage'],
+        productName: map['productName'],
+        productPrice: map['productPrice'],
+        productQuantity: map['productQuantity']);
+  }
 }

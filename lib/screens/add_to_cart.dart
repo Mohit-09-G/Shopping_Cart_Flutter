@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shop/models/product_model.dart';
-<<<<<<< HEAD
-=======
 
 final _messageController = TextEditingController();
->>>>>>> 18d8adda2fb6c0e4be9a32e4cc61f1a921ce1540
 
 class AddToCart extends StatefulWidget {
   final List<Map<int, List<ProductModel>>> cartItems;
@@ -422,31 +419,11 @@ class _AddToCartState extends State<AddToCart> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-<<<<<<< HEAD
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: Text(
-            "Check out",
-            style: GoogleFonts.poppins(fontSize: 16, color: Colors.white),
-          ),
-=======
             child: Text(
               "Check Out",
               style: GoogleFonts.poppins(fontSize: 16, color: Colors.white),
             ),
           ),
->>>>>>> 18d8adda2fb6c0e4be9a32e4cc61f1a921ce1540
         ),
       ),
     );
