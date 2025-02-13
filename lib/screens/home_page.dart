@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shop/database/dbhelper.dart';
@@ -18,7 +16,6 @@ class _HomePageState extends State<HomePage> {
   List<Map<int, List<ProductModel>>> allProducts = [];
   Map<int, List<ProductModel>> newallProducts = {};
   List<ProductModel> products = [];
-  // AllProductsModel allProductsModel = AllProductsModel(allProducts: {});
 
   @override
   void initState() {
@@ -47,60 +44,31 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-// // Function to add products to the list of maps
-//   void addProduct(ProductModel product) {
-//     bool productAdded = false;
-
-//     // Iterate through the list of maps to find if the product ID exists
-//     for (var productMap in allProducts) {
-//       if (productMap.containsKey(product.id)) {
-//         // If the product ID exists in the map, add to the list
-//         productMap[product.id]?.add(product);
-//         productAdded = true;
-//         break;
-//       }
-//     }
-
-//     // If product ID was not found, create a new map and add it to the list
-//     if (!productAdded) {
-//       allProducts.add({
-//         product.id: [product]
-//       });
-//     }
-//     setState(() {});
-//   }
-
   void addProduct(ProductModel product) {
     bool productAdded = false;
 
-    // Iterate through the list of maps to find if the product ID exists
     for (var productMap in allProducts) {
       if (productMap.containsKey(product.id)) {
-        // If the product ID exists in the map, add to the list
         productMap[product.id]?.add(product);
         productAdded = true;
         break;
       }
     }
 
-    // If product ID was not found, create a new map and add it to the list
     if (!productAdded) {
       allProducts.add({
         product.id: [product]
       });
     }
 
-    // After adding the product, update the AllProductsModel in the database
     _updateAllProductsModelInDb();
   }
 
-// Update AllProductsModel in the database
   void _updateAllProductsModelInDb() async {
     try {
       AllProductsModel allProductsModel =
           AllProductsModel(productGroups: allProducts);
 
-      // Insert the updated AllProductsModel into the database
       await DatabaseHelper.instance.insertAllProducts(allProductsModel);
       allProductsModel = await DatabaseHelper.instance.queryAllProductsModel();
       setState(() {
@@ -111,39 +79,27 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // void addProductTO(ProductModel product) {
-  //   bool productAdded = false;
+  void removeProduct(ProductModel product) async {
+    for (var group in allProducts) {
+      if (group.containsKey(product.id)) {
+        List<ProductModel> productList = group[product.id] ?? [];
 
-  //   // Check if the product ID already exists in the map
-  //   for (var key in allProductsModel.allProducts.keys) {
-  //     if (key == product.id) {
-  //       // If product ID exists, add it to the list
-  //       allProductsModel.allProducts[key]?.add(product);
-  //       productAdded = true;
-  //       break;
-  //     }
-  //   }
+        productList.removeAt(productList.length - 1);
 
-  //   // If product ID doesn't exist, create a new entry
-  //   if (!productAdded) {
-  //     allProductsModel.allProducts[product.id] = [product];
-  //   }
-
-  //   // After adding, update the UI
-  //   setState(() {});
-  // }
-
-  void removeProduct(ProductModel product) {
-    // bool productRemove = false;
-
-    for (var items in allProducts) {
-      if (items.containsKey(product.id)) {
-        items[product.id]?.remove(product);
-        // productRemove = true;
+        group[product.id] = productList;
         break;
       }
     }
-    setState(() {});
+
+    AllProductsModel allProductsModel1 =
+        AllProductsModel(productGroups: allProducts);
+    await DatabaseHelper.instance.deleteProductFromGroup(allProductsModel1);
+
+    AllProductsModel allProductsModel =
+        await DatabaseHelper.instance.queryAllProductsModel();
+    setState(() {
+      allProducts = allProductsModel.productGroups;
+    });
   }
 
   void mergeMapData(
@@ -152,25 +108,23 @@ class _HomePageState extends State<HomePage> {
   ) {
     for (var resultMap in result) {
       resultMap.forEach((key, value) {
-        // Check if the key exists in allProducts
         bool found = false;
         for (var allProductMap in allProducts) {
           if (allProductMap.containsKey(key)) {
             found = true;
-            // If the value for this key is a map, we recursively call mergeMapData
+
             if (value is Map && allProductMap[key] is Map) {
               mergeMapData(
                 allProductMap[key] as List<Map<int, List<ProductModel>>>,
                 value as List<Map<int, List<ProductModel>>>,
               );
             } else {
-              // Otherwise, we simply update the key with the new value
               allProductMap[key] = value;
             }
             break;
           }
         }
-        // If the key wasn't found in any map, add it
+
         if (!found) {
           allProducts.add({key: value});
         }
@@ -266,13 +220,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                               SizedBox(
                                 height: 10,
-                              ), // Divider(
-                              //   height: 1,
-                              //   thickness: 2,
-                              //   color: Color(0xFF000000),
-                              //   indent: 16,
-                              //   endIndent: 16,
-                              // ),
+                              ),
                               Row(
                                 children: [
                                   Expanded(
@@ -283,7 +231,6 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 ],
                               ),
-
                               Expanded(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,

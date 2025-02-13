@@ -18,7 +18,6 @@ class DatabaseHelper {
     return _database!;
   }
 
-  // Delete the database - only use this when actually needed
   Future<void> deleteDatabase() async {
     String databasesPath = await getDatabasesPath();
     String path = join(databasesPath, 'shop.db');
@@ -57,7 +56,6 @@ class DatabaseHelper {
   }
 
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    // Drop and recreate the table
     await db.execute('DROP TABLE IF EXISTS product_table');
     await _onCreate(db, newVersion);
   }
@@ -85,6 +83,29 @@ class DatabaseHelper {
     }
   }
 
+  Future<int> deleteProductFromGroup(AllProductsModel allProductsModel) async {
+    try {
+      Database db = await instance.db;
+
+      var result = await db.query(
+        'all_products_table',
+      );
+
+      if (result.isNotEmpty) {
+        String allProductsJson = json.encode(allProductsModel.toMap());
+        return await db.update(
+          'all_products_table',
+          {'allProductsJson': allProductsJson},
+        );
+      }
+
+      return 0;
+    } catch (e) {
+      print('Error deleting product from group: $e');
+      rethrow;
+    }
+  }
+
   Future<AllProductsModel> queryAllProductsModel() async {
     Database db = await instance.db;
     List<Map<String, dynamic>> result = await db.query('all_products_table');
@@ -107,12 +128,10 @@ class DatabaseHelper {
 
   Future<void> initializProducts() async {
     try {
-      // Check if products already exist
       Database db = await instance.db;
       List<Map<String, dynamic>> existingProducts =
           await db.query('product_table');
 
-      // Only initialize if the table is empty
       if (existingProducts.isEmpty) {
         List<ProductModel> products = [
           ProductModel(
