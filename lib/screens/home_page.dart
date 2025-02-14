@@ -14,6 +14,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Map<int, List<ProductModel>>> allProducts = [];
+
   Map<int, List<ProductModel>> newallProducts = {};
   List<ProductModel> products = [];
 
@@ -27,9 +28,32 @@ class _HomePageState extends State<HomePage> {
   Future<void> getInitialData() async {
     AllProductsModel allProductsModel =
         await DatabaseHelper.instance.queryAllProductsModel();
-    setState(() {
-      allProducts = allProductsModel.productGroups;
-    });
+    mergeProducts(allProducts, allProductsModel.productGroups);
+  }
+
+  void mergeProducts(List<Map<int, List<ProductModel>>> allProducts,
+      List<Map<int, List<ProductModel>>> productGroups) {
+    for (var productMap in allProducts) {
+      productMap.forEach((productKey, productList) {
+        bool keyFound = false;
+
+        // Check if the key exists in any map within productGroups
+        for (var groupMap in productGroups) {
+          if (groupMap.containsKey(productKey)) {
+            // If key exists, add all products from productGroups to allProducts
+            productList.addAll(groupMap[productKey]!);
+            keyFound = true;
+            break;
+          }
+        }
+
+        // If key wasn't found in productGroups, add an empty list
+        if (!keyFound) {
+          productList.addAll([]); // Adding empty list for missing keys
+        }
+      });
+    }
+    setState(() {});
   }
 
   Future<void> fetchList() async {

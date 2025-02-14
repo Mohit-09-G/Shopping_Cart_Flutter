@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shop/screens/home_page.dart';
+import 'package:shop/screens/login_screen/login_screen.dart';
 
 import 'database/dbhelper.dart';
 
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(Object context) {
     return MaterialApp(
-      home: const HomePage(),
+      home: LoginScreen(),
       debugShowCheckedModeBanner: false,
     );
   }

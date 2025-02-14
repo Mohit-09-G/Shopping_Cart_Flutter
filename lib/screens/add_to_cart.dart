@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shop/database/dbhelper.dart';
+import 'package:shop/models/all_products.dart';
 import 'package:shop/models/product_model.dart';
 
 final _messageController = TextEditingController();
@@ -53,11 +55,30 @@ class _AddToCartState extends State<AddToCart> {
         product.id: [product]
       });
     }
-    setState(() {
-      newcartItems = filterList();
-      itemAmount();
-      applyDiscunt();
-    });
+    // setState(() {
+    //   newcartItems = filterList();
+    //   itemAmount();
+    //   applyDiscunt();
+    // });
+    _updateAllProductsModelInDb();
+  }
+
+  void _updateAllProductsModelInDb() async {
+    try {
+      AllProductsModel allProductsModel =
+          AllProductsModel(productGroups: newcartItems);
+
+      await DatabaseHelper.instance.insertAllProducts(allProductsModel);
+      allProductsModel = await DatabaseHelper.instance.queryAllProductsModel();
+      setState(() {
+        newcartItems = allProductsModel.productGroups;
+        itemAmount();
+        applyDiscunt();
+        print(newcartItems);
+      });
+    } catch (e) {
+      print("Error updating AllProductsModel in DB: $e");
+    }
   }
 
   applyDiscunt() {
@@ -92,15 +113,28 @@ class _AddToCartState extends State<AddToCart> {
     }
   }
 
-  removeItems(ProductModel product) {
+  removeItems(ProductModel product) async {
     for (var Items in newcartItems) {
       if (Items.containsKey(product.id)) {
-        Items[product.id]?.remove(product);
+        List<ProductModel> productList = Items[product.id] ?? [];
+
+        productList.removeAt(productList.length - 1);
+
+        Items[product.id] = productList;
+
         break;
       }
     }
+    AllProductsModel allProductsModel1 =
+        AllProductsModel(productGroups: newcartItems);
+    await DatabaseHelper.instance.deleteProductFromGroup(allProductsModel1);
+
+    AllProductsModel allProductsModel =
+        await DatabaseHelper.instance.queryAllProductsModel();
+
     setState(() {
-      newcartItems = filterList();
+      // newcartItems = filterList();
+      newcartItems = allProductsModel.productGroups;
       itemAmount();
       applyDiscunt();
     });
