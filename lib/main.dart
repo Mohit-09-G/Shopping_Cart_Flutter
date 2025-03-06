@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shop/screens/login_screen/login_screen.dart';
+import 'package:shop/routes/route.dart' as route;
 
 import 'database/dbhelper.dart';
 
@@ -10,13 +10,19 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
   Widget build(Object context) {
     return MaterialApp(
-      home: LoginScreen(),
+      onGenerateRoute: route.controller,
+      initialRoute: route.loginpage,
       debugShowCheckedModeBanner: false,
     );
   }

@@ -3,13 +3,14 @@ import 'dart:convert';
 import 'package:path/path.dart';
 import 'package:shop/models/all_products.dart';
 import 'package:shop/models/product_model.dart';
+import 'package:shop/models/user_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._instance();
   static Database? _database;
 
-  static const int _databaseVersion = 2;
+  static const int _databaseVersion = 6;
 
   DatabaseHelper._instance();
 
@@ -39,24 +40,39 @@ class DatabaseHelper {
 
   Future _onCreate(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE product_table (
-        id INTEGER PRIMARY KEY,
-        productName TEXT,
-        productImage TEXT,
-        productPrice TEXT,
-        productQuantity TEXT
-      )
-    ''');
+    CREATE TABLE product_table (
+      id INTEGER PRIMARY KEY,
+      productName TEXT,
+      productImage TEXT,
+      productPrice TEXT,
+      productQuantity TEXT
+    )
+  ''');
     await db.execute('''
-      CREATE TABLE all_products_table (
-        id INTEGER PRIMARY KEY,
-        allProductsJson TEXT
-      )
-    ''');
+    CREATE TABLE all_products_table (
+      id INTEGER PRIMARY KEY,
+      allProductsJson TEXT
+    )
+  ''');
+    await db.execute('''
+    CREATE TABLE user_detail (
+      email TEXT PRIMARY KEY,
+      password TEXT
+    )
+  ''');
+    await db.execute('''
+    CREATE TABLE user_status (
+      email TEXT PRIMARY KEY,
+      password TEXT
+    )
+  ''');
   }
 
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
     await db.execute('DROP TABLE IF EXISTS product_table');
+    await db.execute('DROP TABLE IF EXISTS all_products_table');
+    await db.execute('DROP TABLE IF EXISTS user_detail');
+    await db.execute('DROP TABLE IF EXISTS user_status');
     await _onCreate(db, newVersion);
   }
 
@@ -80,6 +96,118 @@ class DatabaseHelper {
     } catch (e) {
       print('Error inserting all products: $e');
       rethrow;
+    }
+  }
+
+  Future<int> insertUser(UserModel userModel) async {
+    try {
+      Database db = await instance.db;
+      // String userModelJson = json.encode(userModel.usertomap());
+      return await db.insert('user_detail', {
+        'email': userModel.email,
+        'password': userModel.password,
+      });
+    } catch (e) {
+      print('error inserting user');
+      rethrow;
+    }
+  }
+
+  Future<int> clearUserStatus() async {
+    try {
+      Database db = await instance.db;
+
+      // Delete all records from user_status table
+      return await db.delete('user_status');
+    } catch (e) {
+      print('Error clearing user status: $e');
+      rethrow;
+    }
+  }
+
+  Future<int> userStatus(UserModel userModel) async {
+    try {
+      Database db = await instance.db;
+
+      // Check if the user status already exists
+      List<Map<String, Object?>> result = await db.query(
+        'user_status',
+        where: 'email = ?',
+        whereArgs: [userModel.email],
+      );
+
+      if (result.isNotEmpty) {
+        // Update the user status if it already exists
+        return await db.update(
+          'user_status',
+          {
+            'email': userModel.email,
+            'password': userModel.password,
+          },
+          where: 'email = ?',
+          whereArgs: [userModel.email],
+        );
+      } else {
+        // Insert the user status if it doesn't exist
+        return await db.insert(
+          'user_status',
+          {
+            'email': userModel.email,
+            'password': userModel.password,
+          },
+        );
+      }
+    } catch (e) {
+      print('Error inserting or updating user status: $e');
+      rethrow;
+    }
+  }
+
+  Future<UserModel?> getUserStatus() async {
+    try {
+      Database db = await instance.db;
+
+      // Query the user_status table to get the data
+      List<Map<String, Object?>> result = await db.query(
+        'user_status',
+      );
+
+      // If there is data, return the UserModel
+      if (result.isNotEmpty) {
+        Map<String, Object?> userStatus = result[0];
+        return UserModel(
+          email: userStatus['email'] as String,
+          password: userStatus['password'] as String,
+        );
+      }
+      return null; // Return null if no data is found
+    } catch (e) {
+      print('Error fetching user status: $e');
+      rethrow;
+    }
+  }
+
+  Future<int> checkUserCredential(UserModel userModel) async {
+    try {
+      Database db = await instance.db;
+
+      List<Map<String, Object?>> result = await db
+          .query('user_detail', where: 'email=?', whereArgs: [userModel.email]);
+
+      if (result.isNotEmpty) {
+        String storedPassword = result[0]['password'] as String;
+
+        if (storedPassword == userModel.password) {
+          return 1;
+        } else {
+          return 0;
+        }
+      } else {
+        return 0;
+      }
+    } catch (e) {
+      print("Error: $e");
+      return -1;
     }
   }
 

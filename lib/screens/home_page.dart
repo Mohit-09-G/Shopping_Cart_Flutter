@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shop/database/dbhelper.dart';
 import 'package:shop/models/all_products.dart';
 import 'package:shop/models/product_model.dart';
+import 'package:shop/routes/route.dart' as route;
 import 'package:shop/screens/add_to_cart.dart';
 
 class HomePage extends StatefulWidget {
@@ -161,6 +162,19 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () async {
+                await DatabaseHelper.instance.clearUserStatus();
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  route.loginpage,
+                  (route) => false,
+                );
+              },
+              icon: Icon(Icons.logout_outlined))
+        ],
+        automaticallyImplyLeading: false,
         backgroundColor: Color(0xFFFFFFFF),
         title: Text(
           "Products",
@@ -374,7 +388,17 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ],
-              ))
+              )),
+          // ElevatedButton(
+          //     onPressed: () async {
+          //       await DatabaseHelper.instance.clearUserStatus();
+          //       Navigator.pushNamedAndRemoveUntil(
+          //         context,
+          //         route.loginpage,
+          //         (route) => false,
+          //       );
+          //     },
+          //     child: Text("Logout"))
         ],
       ),
     );
